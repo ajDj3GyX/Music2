@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>向你奔袭 | 沉浸式音乐体验</title>
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-stone-950 text-stone-200 antialiased overflow-x-hidden">
+    <!-- 增强动态背景 -->
+    <div class="fixed inset-0 z-0">
+        <div class="absolute inset-0 bg-gradient-to-br from-stone-900 via-stone-950 to-black"></div>
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsIDI1NSwgMjU1LCAwLjAyKSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==')] opacity-20"></div>
+        <div class="absolute inset-0 animate-pulse-gradient"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-stone-950/80"></div>
+        
+        <!-- 新增动态粒子效果 -->
+        <canvas id="particles-canvas" class="absolute inset-0 w-full h-full opacity-10 pointer-events-none"></canvas>
+    </div>
+
+    <div id="app-container" class="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 sm:p-8">
+        <main class="max-w-4xl w-full mx-auto space-y-16">
+            
+            <!-- 标题区域 -->
+            <header class="text-center opacity-0" style="translate: 0 20px;">
+                <div class="mb-6 flex justify-center">
+                    <div class="w-24 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent rounded-full animate-pulse"></div>
+                </div>
+                <h1 class="text-5xl sm:text-6xl md:text-7xl font-playfair-display font-bold text-stone-100 tracking-wider mb-4 drop-shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                    向你奔袭
+                </h1>
+                <p class="text-stone-400 font-noto-sans-sc text-lg tracking-wider">沉浸式音乐体验</p>
+            </header>
+
+            <!-- 播放器区域 -->
+            <section id="player-section" class="w-full opacity-0" style="translate: 0 20px;">
+                <div class="bg-stone-900/50 backdrop-blur-lg rounded-2xl shadow-2xl p-6 sm:p-8 border border-stone-800/50 relative overflow-hidden">
+                    <div class="absolute -top-20 -right-20 w-40 h-40 bg-amber-400/10 rounded-full blur-3xl animate-ping-slow"></div>
+                    <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl animate-ping-slow"></div>
+                    
+                    <!-- 唱片设计 -->
+                    <div class="record-container absolute -top-16 left-1/2 transform -translate-x-1/2 w-32 h-32 z-20">
+                        <div id="record" class="w-full h-full rounded-full bg-gradient-to-br from-stone-800 to-stone-900 border-8 border-stone-700/50 shadow-2xl flex items-center justify-center relative">
+                            <div class="w-16 h-16 rounded-full bg-stone-900 border-4 border-stone-700/50"></div>
+                        </div>
+                        <div class="record-arm absolute -top-6 -right-6 transform -rotate-[25deg] origin-top-right w-2 h-20 bg-gradient-to-b from-stone-700 to-stone-800 rounded-t-full z-10"></div>
+                        <div class="record-arm-head absolute -top-6 -right-6 transform -rotate-[25deg] origin-top-right w-4 h-4 bg-stone-700 rounded-full z-10"></div>
+                    </div>
+                    
+                    <div class="relative z-10 pt-16">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-xl font-playfair-display text-amber-300 tracking-wider">正在播放</h2>
+                            <div class="flex space-x-2">
+                                <button id="play-btn" class="p-2 rounded-full bg-stone-800 hover:bg-stone-700 transition-all duration-300 transform hover:scale-105 group">
+                                    <i data-lucide="play" class="w-5 h-5 text-amber-400 group-hover:text-amber-300"></i>
+                                </button>
+                                <button id="volume-btn" class="p-2 rounded-full bg-stone-800 hover:bg-stone-700 transition-all duration-300 transform hover:scale-105 group">
+                                    <i data-lucide="volume-2" class="w-5 h-5 text-amber-400 group-hover:text-amber-300"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-stone-800/50 rounded-xl p-4 mb-4">
+                            <audio id="audio-player" class="w-full" preload="auto">
+                                <source src="https://v3.fal.media/files/kangaroo/W6VUlmChcXpBh9YnBmS8N_output_20250809144901_0.wav" type="audio/wav">
+                                Your browser does not support the audio element.
+                            </audio>
+                        </div>
+                        
+                        <div class="flex justify-between text-sm text-stone-400">
+                            <span id="current-time" class="font-playfair-display italic">0:00</span>
+                            <span id="duration" class="font-playfair-display italic">0:00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 歌词区域 -->
+            <section id="lyrics-container" class="space-y-10">
+                <!-- 歌词将通过JS动态加载 -->
+            </section>
+            
+            <!-- 页脚 -->
+            <footer class="text-center text-stone-500 text-sm pt-8 border-t border-stone-800/50 transition-opacity duration-300">
+                <p>© 2025 向你奔袭 | 沉浸式音乐体验</p>
+            </footer>
+        </main>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
